@@ -1,0 +1,42 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+      "type": "chrome",
+      "request": "launch",
+      "name": "Angular chrome",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}"
+    },
+        {
+      "type": "msedge",
+      "request": "launch",
+      "name": "Launch Edge against localhost",
+      "url": "http://localhost:4200",
+      "webRoot": "${workspaceFolder}"
+    },
+        {
+            "name": "Attach to Chrome",
+            "port": 9222,
+            "request": "attach",
+            "type": "chrome",
+            "webRoot": "${workspaceFolder}"
+        },
+        {
+            "type": "java",
+            "name": "Current File",
+            "request": "launch",
+            "mainClass": "${file}"
+        },
+        {
+            "type": "java",
+            "name": "EmployeApplication",
+            "request": "launch",
+            "mainClass": "com.employe.EmployeApplication",
+            "projectName": "Employe"
+        }
+    ]
+}
