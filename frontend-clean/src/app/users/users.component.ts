@@ -1,5 +1,5 @@
 
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { UserService } from './user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { UserFormComponent } from './user-form/user-form.component';
@@ -13,14 +13,17 @@ import { User } from '../models/user.model';
   styleUrls: ['./users.component.css']
 })
 export class UserComponent implements OnInit {
+  private userService = inject(UserService);
+  private dialog = inject(MatDialog);
+
   users: User[] = [];
   loading = true;
   displayedColumns: string[] = ['name', 'email', 'roles', 'actions'];
 
-  constructor(
-    private userService: UserService,
-    private dialog: MatDialog
-  ) { }
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() { }
 
   ngOnInit(): void {
     this.loadUsers();

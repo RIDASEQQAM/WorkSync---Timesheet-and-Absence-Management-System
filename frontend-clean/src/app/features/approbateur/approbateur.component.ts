@@ -1,6 +1,7 @@
 import { CommonModule } from '@angular/common';
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { ChunkPipe } from '../../shared/pipes/chunk.pipe';
 
 interface FeuilleTemps {
   id: number;
@@ -15,7 +16,7 @@ interface FeuilleTemps {
 @Component({
   selector: 'app-approbateur',
   standalone: true,
-  imports: [CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule, ChunkPipe],
   templateUrl: './approbateur.component.html',
   styleUrls: ['./approbateur.component.css']
 })
@@ -27,6 +28,51 @@ export class ApprobateurComponent {
     heures: 0,
     statut: 'En création'
   };
+
+  selectDay(day: { date: Date; isCurrentMonth: boolean }): void {
+    if (day.isCurrentMonth) {
+      // Your existing date selection logic
+      this.selectDate(day.date);
+    }
+  }
+
+  formatDayAriaLabel(day: { date: Date; isCurrentMonth: boolean }): string {
+    const date = day.date;
+    const isToday = this.isToday(date);
+    const isSelected = this.isSelectedDay(date);
+    
+    let label = date.toLocaleDateString('fr-FR', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+    
+    if (isToday) {
+      label += ' (Aujourd\'hui)';
+    }
+    if (isSelected) {
+      label += ' (Sélectionné)';
+    }
+    if (!day.isCurrentMonth) {
+      label += ' (Hors mois courant)';
+    }
+    
+    return label;
+  }
+
+  isSelectedDay(date: Date): boolean {
+    if (!this.nouvelleFeuille.periode) return false;
+    const selectedDate = new Date(this.nouvelleFeuille.periode);
+    return date.getTime() === selectedDate.getTime();
+  }
+
+  private isToday(date: Date): boolean {
+    const today = new Date();
+    return date.getDate() === today.getDate() &&
+           date.getMonth() === today.getMonth() &&
+           date.getFullYear() === today.getFullYear();
+  }
 
   showCalendar = false;
   selectedDateRange: { start?: Date, end?: Date } = {};

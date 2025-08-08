@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { Absence } from '../models/absence.model';
 
 @Component({
   selector: 'app-absence',
@@ -6,9 +7,9 @@ import { Component } from '@angular/core';
   styleUrls: ['./absence.component.css']
 })
 export class AbsenceComponent {
-  absences: any[] = [];
+  absences: Absence[] = [];
 
-  absence = {
+  absence: Absence = {
     type: '',
     startDate: '',
     endDate: ''

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { FeuilleDeTemps } from '../models/feuille-de-temps.model';
@@ -7,9 +7,14 @@ import { FeuilleDeTemps } from '../models/feuille-de-temps.model';
     providedIn: 'root'
 })
 export class FeuilleDeTempsService {
+    private http = inject(HttpClient);
+
     private apiUrl = 'http://localhost:8090/api/feuille-de-temps';
 
-    constructor(private http: HttpClient) { }
+    /** Inserted by Angular inject() migration for backwards compatibility */
+    constructor(...args: unknown[]);
+
+    constructor() { }
 
     // Method to get all timesheets
     getFeuillesDeTemps(): Observable<FeuilleDeTemps[]> {

@@ -1,7 +1,13 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { 
+  TimesheetDraft, 
+  TimesheetDraftResponse,
+  TimesheetSubmission,
+  TimesheetSubmissionResponse 
+} from '../models/timesheet-draft.model';
 
 export interface Timesheet {
   id: number;
@@ -25,18 +31,23 @@ export interface TimesheetEntry {
   providedIn: 'root'
 })
 export class TimesheetService {
-  saveDraft(draft: { month: number; year: number; hours: { [key: number]: number; }; savedBy: any; savedAt: Date; }) {
-    throw new Error('Method not implemented.');
-  }
-  getDrafts() {
-    throw new Error('Method not implemented.');
-  }
-  submitTimesheet(arg0: { month: number; year: number; hours: { [key: number]: number; }; submittedBy: any; }) {
-    throw new Error('Method not implemented.');
-  }
+  private http = inject(HttpClient);
+
   private apiUrl = `${environment.apiURL}/timesheets`;
 
-  constructor(private http: HttpClient) { }
+  saveDraft(draft: TimesheetDraft): Observable<TimesheetDraftResponse> {
+    return this.http.post<TimesheetDraftResponse>(`${this.apiUrl}/drafts`, draft);
+  }
+
+  getDrafts(): Observable<TimesheetDraftResponse[]> {
+    return this.http.get<TimesheetDraftResponse[]>(`${this.apiUrl}/drafts`);
+  }
+
+  submitTimesheet(submission: TimesheetSubmission): Observable<TimesheetSubmissionResponse> {
+    return this.http.post<TimesheetSubmissionResponse>(`${this.apiUrl}/submit`, submission);
+  }
+
+  constructor() { }
 
   // Get all timesheets
   getTimesheets(): Observable<Timesheet[]> {

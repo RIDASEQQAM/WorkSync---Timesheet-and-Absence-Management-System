@@ -1,20 +1,21 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { User } from '../../models/user.model';
-//import { RoleEnum } from '../../models/role.model';
+import { Role } from '../../models/role.model';
+import { CommonModule } from '@angular/common';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @Component({
-  standalone:false,
+  standalone: true,
   selector: 'app-user-details',
   templateUrl: './user-details.component.html',
-  styleUrls: ['./user-details.component.css']
+  styleUrls: ['./user-details.component.css'],
+  imports: [CommonModule, MatDialogModule]
 })
 export class UserDetailsComponent {
-  //roleEnum = RoleEnum;
+  user = inject<User>(MAT_DIALOG_DATA);
 
-  constructor(@Inject(MAT_DIALOG_DATA) public user: User) { }
-
-  getRoleNames(roles: any[]): string {
+  getRoleNames(roles: Role[]): string {
     return roles.map(role => role.name.replace('ROLE_', '')).join(', ');
   }
 

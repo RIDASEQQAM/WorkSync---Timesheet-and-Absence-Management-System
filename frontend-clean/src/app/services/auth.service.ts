@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { BehaviorSubject, Observable, throwError } from 'rxjs';
 import { catchError, map, tap } from 'rxjs/operators';
@@ -22,14 +22,26 @@ export interface AuthResponse {
   providedIn: 'root'
 })
 export class AuthService {
+  private http = inject(HttpClient);
+  private router = inject(Router);
+
   private apiUrl = `${environment.apiURL}/auth`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
+  private isAuthenticatedSubject = new BehaviorSubject<boolean>(false);
   public currentUser$ = this.currentUserSubject.asObservable();
-  isAuthenticated$: any;
+  public isAuthenticated$ = this.isAuthenticatedSubject.asObservable();
 
-  constructor(private http: HttpClient, private router: Router) { }
+  constructor() {
+    // Initialize authentication state from localStorage
+    const storedUser = localStorage.getItem('currentUser');
+    if (storedUser) {
+      const user = JSON.parse(storedUser) as User;
+      this.currentUserSubject.next(user);
+      this.isAuthenticatedSubject.next(true);
+    }
+  }
 
-  login(credentials: { email: string; password: string; }, password: any): Observable<User> {
+  login(credentials: { email: string; password: string }): Observable<User> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     }).pipe(
@@ -51,7 +63,7 @@ export class AuthService {
     this.currentUserSubject.next(response.user);
   }
 
-  private redirectBasedOnRole(role: string): void {
+  private redirectBasedOnRole(role: User['role']): void {
     if (role === 'ADMIN') {
       this.router.navigate(['/admin']);
     } else {
@@ -64,13 +76,15 @@ export class AuthService {
     localStorage.removeItem('auth_token');
     localStorage.removeItem('currentUser');
     this.currentUserSubject.next(null);
+    this.isAuthenticatedSubject.next(false);
     this.router.navigate(['/login']);
   }
 
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
   }
-  setAuthentication(value: boolean) {
-    this.isAuthenticated$.next(value);
+
+  setAuthentication(value: boolean): void {
+    this.isAuthenticatedSubject.next(value);
   }
 }

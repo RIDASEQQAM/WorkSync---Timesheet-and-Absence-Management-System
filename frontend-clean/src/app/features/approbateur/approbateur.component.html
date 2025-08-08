@@ -12,32 +12,73 @@
     </div>
 
     <!-- Vue Création -->
-    <div class="formulaire-ajout" *ngIf="currentView === 'creation'">
-        <h2>Timesheets 🕙</h2>
+    <div class="formulaire-ajout" *ngIf="currentView === 'creation'" role="form" aria-labelledby="timesheet-title">
+        <h2 id="timesheet-title">Timesheets 🕙</h2>
 
         <div class="form-group">
-            <label>Nom de l'employé:</label>
-            <input type="text" [(ngModel)]="nouvelleFeuille.employe" placeholder="Votre nom">
+            <label for="employee-name">Nom de l'employé:</label>
+            <input 
+                id="employee-name"
+                type="text" 
+                [(ngModel)]="nouvelleFeuille.employe" 
+                placeholder="Votre nom"
+                aria-label="Nom de l'employé">
         </div>
 
         <div class="form-group">
-            <label>Période travaillée:</label>
-            <div class="periode-input">
-                <input type="text" [(ngModel)]="nouvelleFeuille.periode" placeholder="Sélectionnez une période"
-                    readonly>
-                <button class="calendar-btn" (click)="toggleCalendar()">📅</button>
+            <label id="period-label">Période travaillée:</label>
+            <div class="periode-input" role="group" aria-labelledby="period-label">
+                <input 
+                    id="period-input"
+                    type="text" 
+                    [(ngModel)]="nouvelleFeuille.periode" 
+                    placeholder="Sélectionnez une période"
+                    readonly
+                    aria-label="Période sélectionnée"
+                    [attr.aria-expanded]="showCalendar">
+                <button 
+                    class="calendar-btn" 
+                    (click)="toggleCalendar()"
+                    (keydown.enter)="toggleCalendar()"
+                    (keydown.space)="toggleCalendar(); $event.preventDefault()"
+                    aria-label="Ouvrir le calendrier">
+                    <span aria-hidden="true">📅</span>
+                </button>
             </div>
 
-            <div class="calendar" *ngIf="showCalendar">
-                <div class="calendar-header">
-                    <button (click)="previousMonth()">◀</button>
-                    <span>{{ getMonthName(currentMonth) }} {{ currentYear }}</span>
-                    <button (click)="nextMonth()">▶</button>
+            <div class="calendar" *ngIf="showCalendar" role="dialog" aria-label="Calendrier">
+                <div class="calendar-header" role="navigation">
+                    <button 
+                        (click)="previousMonth()" 
+                        (keydown.enter)="previousMonth()"
+                        aria-label="Mois précédent">
+                        <span aria-hidden="true">◀</span>
+                    </button>
+                    <span role="heading" aria-level="3">{{ getMonthName(currentMonth) }} {{ currentYear }}</span>
+                    <button 
+                        (click)="nextMonth()"
+                        (keydown.enter)="nextMonth()"
+                        aria-label="Mois suivant">
+                        <span aria-hidden="true">▶</span>
+                    </button>
                 </div>
-                <div class="calendar-grid">
-                    <div class="day-header" *ngFor="let day of ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']">{{ day
-                        }}</div>
-                    <div *ngFor="let day of generateCalendarDays()" class="day"
+                <div class="calendar-grid" role="grid">
+                    <div class="day-header" role="row">
+                        <div role="columnheader" *ngFor="let day of ['Lun', 'Mar', 'Mer', 'Jeu', 'Ven', 'Sam', 'Dim']">
+                            {{ day }}
+                        </div>
+                    </div>
+                    <div role="row" *ngFor="let week of generateCalendarDays() | chunk:7">
+                        <button 
+                            role="gridcell" 
+                            *ngFor="let day of week" 
+                            class="day"
+                            [attr.tabindex]="day.isCurrentMonth ? 0 : -1"
+                            (click)="selectDay(day)"
+                            (keydown.enter)="selectDay(day)"
+                            (keydown.space)="selectDay(day); $event.preventDefault()"
+                            [attr.aria-label]="formatDayAriaLabel(day)"
+                            [attr.aria-selected]="isSelectedDay(day)"
                         [class.selected-start]="isSelectedStart(day)" [class.selected-end]="isSelectedEnd(day)"
                         [class.in-range]="isInRange(day)" (click)="selectDate(day)">
                         {{ day.getDate() }}
@@ -47,8 +88,15 @@
         </div>
 
         <div class="form-group">
-            <label>Heures travaillées:</label>
-            <input type="number" [(ngModel)]="nouvelleFeuille.heures" min="0" step="0.5">
+            <label for="hours-worked">Heures travaillées:</label>
+            <input 
+                id="hours-worked"
+                type="number" 
+                [(ngModel)]="nouvelleFeuille.heures" 
+                min="0" 
+                step="0.5"
+                aria-label="Heures travaillées"
+                placeholder="Entrez le nombre d'heures">
         </div>
 
         <button class="btn-ajouter" (click)="ajouterFeuille()">Soumettre</button>

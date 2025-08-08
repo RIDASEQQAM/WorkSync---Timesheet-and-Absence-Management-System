@@ -7,7 +7,9 @@
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "serve:ssr:frontend-clean": "node dist/frontend-clean/server/server.mjs"
+    "serve:ssr:frontend-clean": "node dist/frontend-clean/server/server.mjs",
+    "lint": "ng lint",
+    "lint:fix": "ng lint --fix"
   },
   "private": true,
   "dependencies": {
@@ -31,11 +33,20 @@
   "devDependencies": {
     "@angular-builders/custom-webpack": "^19.0.1",
     "@angular-devkit/build-angular": "^19.2.8",
+    "@angular-eslint/builder": "^20.1.1",
+    "@angular-eslint/eslint-plugin": "^20.1.1",
+    "@angular-eslint/eslint-plugin-template": "^20.1.1",
+    "@angular-eslint/schematics": "^20.1.1",
+    "@angular-eslint/template-parser": "^20.1.1",
     "@angular/cli": "^19.2.8",
     "@angular/compiler-cli": "^19.2.0",
     "@types/express": "^4.17.17",
     "@types/jasmine": "~5.1.0",
     "@types/node": "^18.18.0",
+    "@typescript-eslint/eslint-plugin": "7.11.0",
+    "@typescript-eslint/parser": "7.11.0",
+    "angular-eslint": "^20.1.1",
+    "eslint": "8.57.1",
     "jasmine-core": "~5.6.0",
     "karma": "~6.4.0",
     "karma-chrome-launcher": "~3.2.0",

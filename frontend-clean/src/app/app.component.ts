@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, OnInit, OnDestroy, PLATFORM_ID, inject } from '@angular/core';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { DOCUMENT } from '@angular/common';
 import { Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
@@ -15,6 +15,11 @@ import { Subscription } from 'rxjs';
   imports: [CommonModule, RouterLink, RouterLinkActive, RouterOutlet]
 })
 export class AppComponent implements OnInit, OnDestroy {
+  private platformId = inject<Object>(PLATFORM_ID);
+  private document = inject<Document>(DOCUMENT);
+  private authService = inject(AuthService);
+  private router = inject(Router);
+
   title = 'Timesheet & Absence Manager';
   isLoaded = false;
   isLoading = true;
@@ -25,12 +30,10 @@ export class AppComponent implements OnInit, OnDestroy {
   private authSub!: Subscription;
   currentYear = new Date().getFullYear();
 
-  constructor(
-    @Inject(PLATFORM_ID) private platformId: Object,
-    @Inject(DOCUMENT) private document: Document,
-    private authService: AuthService,
-    private router: Router
-  ) { }
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() { }
 
   ngOnInit() {
     if (isPlatformBrowser(this.platformId)) {

@@ -1,30 +1,55 @@
-import { Component, Inject, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
+import { Component, OnInit, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatSelectModule } from '@angular/material/select';
+import { MatButtonModule } from '@angular/material/button';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
 import { UserService } from '../user.service';
 import { User } from '../../models/user.model';
-import { Role } from '../../models/role.model';
-import { RoleEnum } from '../../models/role.model';
+import { Role, RoleEnum } from '../../models/role.model';
 
 @Component({
-  standalone:false,
+  standalone: true,
   selector: 'app-user-form',
   templateUrl: './user-form.component.html',
-  styleUrls: ['./user-form.component.css']
+  styleUrls: ['./user-form.component.css'],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatSelectModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    MatNativeDateModule
+  ]
 })
 export class UserFormComponent implements OnInit {
+  private fb = inject(FormBuilder);
+  private userService = inject(UserService);
+  private dialogRef = inject<MatDialogRef<UserFormComponent>>(MatDialogRef);
+  data = inject<{
+    user: User;
+    isEdit: boolean;
+}>(MAT_DIALOG_DATA);
+
   userForm!: FormGroup;
   roles: Role[] = [];
   supervisors: User[] = [];
   isEdit = false;
   roleEnum = RoleEnum;
 
-  constructor(
-    private fb: FormBuilder,
-    private userService: UserService,
-    private dialogRef: MatDialogRef<UserFormComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { user: User, isEdit: boolean }
-  ) {
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {
+    const data = this.data;
+
     this.isEdit = data.isEdit;
   }
 

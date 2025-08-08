@@ -2,19 +2,19 @@
     <h2>Demandes d'Absence</h2>
 
     <form (ngSubmit)="submitAbsence()">
-        <label>Type d'absence:</label>
-        <select [(ngModel)]="absence.type" name="type" required>
+        <label for="type">Type d'absence:</label>
+        <select [(ngModel)]="absence.type" name="type" id="type" required>
             <option value="">Sélectionner</option>
             <option value="Congé payé">Congé payé</option>
             <option value="Maladie">Maladie</option>
             <option value="Personnel">Personnel</option>
         </select>
 
-        <label>Début:</label>
-        <input type="date" [(ngModel)]="absence.startDate" name="startDate" required />
+        <label for="startDate">Début:</label>
+        <input type="date" [(ngModel)]="absence.startDate" name="startDate" id="startDate" required />
 
-        <label>Fin:</label>
-        <input type="date" [(ngModel)]="absence.endDate" name="endDate" required />
+        <label for="endDate">Fin:</label>
+        <input type="date" [(ngModel)]="absence.endDate" name="endDate" id="endDate" required />
 
         <button type="submit">Demander</button>
     </form>

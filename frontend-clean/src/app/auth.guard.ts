@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, inject } from '@angular/core';
 import { CanActivate, Router, ActivatedRouteSnapshot, RouterStateSnapshot } from '@angular/router';
 import { Observable } from 'rxjs';
 import { AuthService } from './services/auth.service'; // Chemin à adapter si nécessaire
@@ -8,11 +8,14 @@ import { map, take } from 'rxjs/operators';
     providedIn: 'root' // Fournit automatiquement ce guard dans toute l'application
 })
 export class AuthGuard implements CanActivate {
+    private authService = inject(AuthService);
+    private router = inject(Router);
 
-    constructor(
-        private authService: AuthService,
-        private router: Router
-    ) { }
+    /** Inserted by Angular inject() migration for backwards compatibility */
+    constructor(...args: unknown[]);
+
+
+    constructor() { }
 
     canActivate(
         route: ActivatedRouteSnapshot,

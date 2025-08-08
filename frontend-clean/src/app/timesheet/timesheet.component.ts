@@ -35,7 +35,7 @@ Reject:
 
 
 
-import { Component, OnInit, AfterViewInit, ViewEncapsulation } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewEncapsulation, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -52,6 +52,10 @@ import { TimesheetService } from '../services/timesheet.service';
   standalone: true
 })
 export class TimesheetComponent implements OnInit, AfterViewInit {
+  private router = inject(Router);
+  private holidayService = inject(HolidayService);
+  private timesheetService = inject(TimesheetService);
+
   daysOfWeek = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
   months = [
     { name: 'January', days: 31 },
@@ -81,9 +85,12 @@ export class TimesheetComponent implements OnInit, AfterViewInit {
   userRole: string = 'ROLE_USER';
   holidays: Date[] = [];
   year = 2025;
-  countryCode = 'MA'; // Morocco
+  countryCode = 'MA';
 
-  constructor(private router: Router, private holidayService: HolidayService, private timesheetService: TimesheetService) { }
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]); // Morocco
+
+  constructor() { }
 
   ngOnInit(): void {
     this.loadHolidays();

@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
@@ -7,10 +7,16 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./confirm-dialog.component.css']
 })
 export class ConfirmDialogComponent {
-  constructor(
-    public dialogRef: MatDialogRef<ConfirmDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: { title: string; message: string }
-  ) {}
+  dialogRef = inject<MatDialogRef<ConfirmDialogComponent>>(MatDialogRef);
+  data = inject<{
+    title: string;
+    message: string;
+}>(MAT_DIALOG_DATA);
+
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() {}
 
   onConfirm(): void {
     this.dialogRef.close(true);

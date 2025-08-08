@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { FeuilleDeTempsService } from '../../services/feuille-de-temps.service';
@@ -13,6 +13,8 @@ import { FeuilleDeTemps } from '../../models/feuille-de-temps.model';
   styleUrls: ['./admin.component.css']
 })
 export class AdminComponent implements OnInit {
+  private feuillesService = inject(FeuilleDeTempsService);
+
   feuillesDeTemps: FeuilleDeTemps[] = [];
   feuilleSelectionnee: FeuilleDeTemps | null = null;
   feuilleEdit: Partial<FeuilleDeTemps> = {};
@@ -24,7 +26,10 @@ export class AdminComponent implements OnInit {
   };
   isEditing = false;
 
-  constructor(private feuillesService: FeuilleDeTempsService) { }
+  /** Inserted by Angular inject() migration for backwards compatibility */
+  constructor(...args: unknown[]);
+
+  constructor() { }
 
   ngOnInit() {
     this.chargerFeuilles();

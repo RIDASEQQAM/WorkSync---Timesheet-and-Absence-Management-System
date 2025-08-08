@@ -8,6 +8,17 @@ export interface User {
     name: string;
     email: string;
     roles: Role[];
+    supervisor?: {
+        id: number;
+        name: string;
+        email: string;
+    };
+    address?: string;
+    phone?: string;
+    socialInsuranceNumber?: string;
+    hireDate?: Date;
+    hourlyRate?: number;
+    subordinates?: User[];
 }
 
 export const ROLE_ADMIN = 'ROLE_ADMIN';
