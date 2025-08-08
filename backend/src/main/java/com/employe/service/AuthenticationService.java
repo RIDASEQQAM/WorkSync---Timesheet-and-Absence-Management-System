@@ -4,8 +4,8 @@ import com.employe.model.Role;
 import com.employe.model.User;
 import com.employe.payload.AuthRequest;
 import com.employe.payload.AuthResponse;
-import com.employe.repository.UserRepository;
 import com.employe.repository.RoleRepository;
+import com.employe.repository.UserRepository;
 import com.employe.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +19,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Collections;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,10 +32,9 @@ public class AuthenticationService {
         private final JwtService jwtService;
         private final AuthenticationManager authenticationManager;
 
-        public ResponseEntity<?> register(String email, String password, String nom, String prenom, String adresse,
-                        String telephone) {
+        public ResponseEntity<?> register(String email, String password, String fullName,
+                        String address, String phoneNumber) {
                 try {
-                        // Validation des champs
                         if (email == null || email.isEmpty()) {
                                 return ResponseEntity.badRequest()
                                                 .body(Collections.singletonMap("message", "L'email est obligatoire"));
@@ -44,42 +44,37 @@ public class AuthenticationService {
                                                 .body(Collections.singletonMap("message",
                                                                 "Le mot de passe est obligatoire"));
                         }
-                        if (nom == null || nom.isEmpty()) {
+                        if (fullName == null || fullName.isEmpty()) {
                                 return ResponseEntity.badRequest()
-                                                .body(Collections.singletonMap("message", "Le nom est obligatoire"));
+                                                .body(Collections.singletonMap("message",
+                                                                "Le nom complet est obligatoire"));
                         }
 
-                        // Vérification email existant
                         if (userRepository.findByEmail(email).isPresent()) {
                                 return ResponseEntity.status(HttpStatus.CONFLICT)
                                                 .body(Collections.singletonMap("message", "Email déjà utilisé"));
                         }
 
-                        // Attribution du rôle
                         Role userRole = roleRepository.findByName("ROLE_USER")
                                         .orElseThrow(() -> new RuntimeException("Role USER non trouvé"));
 
-                        // Création de l'utilisateur
                         User user = User.builder()
                                         .email(email)
                                         .password(passwordEncoder.encode(password))
-                                        .nom(nom)
-                                        .prenom(prenom)
-                                        .adresse(adresse)
-                                        .telephone(telephone)
-                                        .roles(Collections.singleton(userRole))
+                                        .fullName(fullName)
+                                        .address(address)
+                                        .phoneNumber(phoneNumber)
+                                        .roles(Set.of(userRole))
                                         .build();
 
                         userRepository.save(user);
 
-                        // Génération du token
                         String jwtToken = jwtService.generateToken(user);
 
                         return ResponseEntity.ok().body(Map.of(
                                         "token", jwtToken,
                                         "message", "Inscription réussie",
-                                        "role", "ROLE_USER" // Par défaut
-                        ));
+                                        "role", "ROLE_USER"));
 
                 } catch (Exception e) {
                         return ResponseEntity.internalServerError()
@@ -89,19 +84,15 @@ public class AuthenticationService {
 
         public ResponseEntity<?> authenticate(AuthRequest request) {
                 try {
-                        // Authentification
                         authenticationManager.authenticate(
                                         new UsernamePasswordAuthenticationToken(request.getEmail(),
                                                         request.getPassword()));
 
-                        // Récupération utilisateur
                         User user = userRepository.findByEmail(request.getEmail())
                                         .orElseThrow(() -> new UsernameNotFoundException("Utilisateur non trouvé"));
 
-                        // Génération token
                         String jwtToken = jwtService.generateToken(user);
 
-                        // Récupération des rôles
                         String roles = user.getRoles().stream()
                                         .map(Role::getName)
                                         .collect(Collectors.joining(","));

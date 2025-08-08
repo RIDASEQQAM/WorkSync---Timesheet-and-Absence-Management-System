@@ -1,22 +1,24 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../services/auth.service';
-import { ReactiveFormsModule } from '@angular/forms';
+import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
 
 @Component({
-  selector: 'app-login',
-  imports: [ReactiveFormsModule],
+  selector: 'app-login',  
+  standalone: true,
+    imports: [CommonModule, ReactiveFormsModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent {
   loginForm: FormGroup;
-  isLoading = false;
   errorMessage = '';
 
   constructor(
     private fb: FormBuilder,
-    private authService: AuthService
+    private authService: AuthService,
+    private router: Router
   ) {
     this.loginForm = this.fb.group({
       email: ['', [Validators.required, Validators.email]],
@@ -24,21 +26,26 @@ export class LoginComponent {
     });
   }
 
-  onLogin() {
-    if (this.loginForm.invalid || this.isLoading) return;
-
-    this.isLoading = true;
-    this.errorMessage = '';
+  onSubmit(): void {
+    if (this.loginForm.invalid) {
+      return;
+    }
 
     const { email, password } = this.loginForm.value;
 
-    this.authService.login({ email, password }).subscribe({
-      next: () => {
-        this.isLoading = false;
+    this.authService.login(email, password).subscribe({
+      next: (response) => {
+        // Supposons que le backend renvoie un rôle : 'ADMIN' ou 'EMPLOYE'
+        const userRole = response.role;
+
+        if (userRole === 'ADMIN') {
+          this.router.navigate(['/admin']);  // route vers la page admin
+        } else {
+          this.errorMessage = 'Accès refusé. Seul l’administrateur peut se connecter.';
+        }
       },
       error: (err) => {
-        this.isLoading = false;
-        this.errorMessage = err.error?.message || 'Email ou mot de passe incorrect';
+        this.errorMessage = 'Identifiants incorrects ou erreur serveur.';
       }
     });
   }

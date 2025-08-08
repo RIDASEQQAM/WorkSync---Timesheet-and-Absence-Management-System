@@ -5,15 +5,15 @@ import { catchError, map, tap } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { environment } from '../../environments/environment';
 
-interface User {
+export interface User {
   id: string;
   email: string;
   firstName: string;
   lastName: string;
-  role: 'ADMIN' | 'APPROBATEUR' | 'EMPLOYE'; // Doit correspondre à votre backend
+  role: 'ADMIN' | 'APPROBATEUR' | 'EMPLOYE';
 }
 
-interface AuthResponse {
+export interface AuthResponse {
   token: string;
   user: User;
 }
@@ -24,34 +24,12 @@ interface AuthResponse {
 export class AuthService {
   private apiUrl = `${environment.apiURL}/auth`;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
-
   public currentUser$ = this.currentUserSubject.asObservable();
   isAuthenticated$: any;
 
   constructor(private http: HttpClient, private router: Router) { }
 
-  // Inscription
-  register(userData: {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
-    role: string;
-  }): Observable<User> {
-    return this.http.post<AuthResponse>(`${this.apiUrl}/register`, userData, {
-      headers: new HttpHeaders({ 'Content-Type': 'application/json' })
-    }).pipe(
-      tap(response => this.handleAuthentication(response)),
-      map(response => response.user),
-      catchError(error => {
-        console.error('Registration error:', error);
-        return throwError(() => error);
-      })
-    );
-  }
-
-  // Connexion
-  login(credentials: { email: string; password: string }): Observable<User> {
+  login(credentials: { email: string; password: string; }, password: any): Observable<User> {
     return this.http.post<AuthResponse>(`${this.apiUrl}/login`, credentials, {
       headers: new HttpHeaders({ 'Content-Type': 'application/json' })
     }).pipe(
@@ -61,7 +39,7 @@ export class AuthService {
       }),
       map(response => response.user),
       catchError(error => {
-        console.error('Login error:', error);
+        console.error('Erreur de connexion :', error);
         return throwError(() => error);
       })
     );
@@ -74,18 +52,11 @@ export class AuthService {
   }
 
   private redirectBasedOnRole(role: string): void {
-    switch (role) {
-      case 'ADMIN':
-        this.router.navigate(['/admin']);
-        break;
-      case 'APPROBATEUR':
-        this.router.navigate(['/approbateur']);
-        break;
-      case 'EMPLOYE':
-        this.router.navigate(['/employe']);
-        break;
-      default:
-        this.router.navigate(['/']);
+    if (role === 'ADMIN') {
+      this.router.navigate(['/admin']);
+    } else {
+      alert("Accès refusé. Seul l'admin peut se connecter.");
+      this.logout();
     }
   }
 
@@ -98,5 +69,8 @@ export class AuthService {
 
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
+  }
+  setAuthentication(value: boolean) {
+    this.isAuthenticated$.next(value);
   }
 }

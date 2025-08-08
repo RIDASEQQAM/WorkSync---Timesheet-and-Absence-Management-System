@@ -25,6 +25,15 @@ export interface TimesheetEntry {
   providedIn: 'root'
 })
 export class TimesheetService {
+  saveDraft(draft: { month: number; year: number; hours: { [key: number]: number; }; savedBy: any; savedAt: Date; }) {
+    throw new Error('Method not implemented.');
+  }
+  getDrafts() {
+    throw new Error('Method not implemented.');
+  }
+  submitTimesheet(arg0: { month: number; year: number; hours: { [key: number]: number; }; submittedBy: any; }) {
+    throw new Error('Method not implemented.');
+  }
   private apiUrl = `${environment.apiURL}/timesheets`;
 
   constructor(private http: HttpClient) { }

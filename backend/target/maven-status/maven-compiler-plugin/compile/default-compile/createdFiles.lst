@@ -8,7 +8,6 @@ com\employe\repository\FeuilleRepository.class
 com\employe\model\Role$RoleBuilder.class
 com\employe\payload\RejetRequest.class
 com\employe\controller\AuthenticationController.class
-com\employe\payload\RegisterRequest.class
 com\employe\repository\RoleRepository.class
 com\employe\config\WebConfig.class
 com\employe\controller\ApprobateurController.class
