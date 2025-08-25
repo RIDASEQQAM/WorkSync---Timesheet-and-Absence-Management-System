@@ -42,9 +42,7 @@ This project is a full-stack application for managing employee timesheets and ab
 
 ## Contributing
 Feel free to fork the repository and submit pull requests.
-
-## License
-Specify your license here (e.g., MIT, Apache 2.0).
+give it a star in github if you like it :)
 
 ## Contact
-Add your contact information or project links here.
+seqqam.rida1@gmail.com
